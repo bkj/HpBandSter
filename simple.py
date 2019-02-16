@@ -144,7 +144,7 @@ for iteration in range(iterations):
         
         iteration.register_result(job)
         bohb.config_generator.new_result(job)
-        all_results.append({"config" : config, "budget" : budget, "res" : res})
+        iteration_results.append({"config" : config, "budget" : budget, "res" : res})
     
     all_results += iteration_results
     all_iterations.append(iteration)
