@@ -203,6 +203,8 @@ class Worker(object):
 		self.logger.debug('WORKER: args: %s'%(str(args)))
 		self.logger.debug('WORKER: kwargs: %s'%(str(kwargs)))
 		try:
+			print('args', args)
+			print('kwargs', kwargs)
 			result = {'result': self.compute(*args, config_id=id, **kwargs),
 						'exception' : None}
 		except Exception as e:

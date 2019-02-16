@@ -115,7 +115,8 @@ class BOHB(base_config_generator):
 		
 		self.logger.debug('start sampling a new configuration.')
 		
-
+		print('CG_BOHB.get_config')
+		
 		sample = None
 		info_dict = {}
 		
@@ -132,6 +133,7 @@ class BOHB(base_config_generator):
 			try:
 				
 				#sample from largest budget
+				print('*' * 50 + ' model sample', max(self.kde_models.keys()))
 				budget = max(self.kde_models.keys())
 
 				l = self.kde_models[budget]['good'].pdf
@@ -279,7 +281,8 @@ class BOHB(base_config_generator):
 			job: hpbandster.distributed.dispatcher.Job object
 				contains all the info about the run
 		"""
-
+		print('CG_BOHB.new_result')
+		
 		super().new_result(job)
 
 		if job.result is None:

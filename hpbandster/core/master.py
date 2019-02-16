@@ -204,6 +204,7 @@ class Master(object):
 			# find a new run to schedule
 			for i in self.active_iterations():
 				next_run = self.iterations[i].get_next_run()
+				print('Master.next_run', next_run)
 				if not next_run is None: break
 
 			if not next_run is None:
@@ -212,7 +213,10 @@ class Master(object):
 				continue
 			else:
 				if n_iterations > 0:	#we might be able to start the next iteration
-					self.iterations.append(self.get_next_iteration(len(self.iterations), iteration_kwargs))
+					print('Master.get_next_iteration')
+					next_iteration = self.get_next_iteration(len(self.iterations), iteration_kwargs)
+					print('Master.next_iteration', next_iteration)
+					self.iterations.append(next_iteration)
 					n_iterations -= 1
 					continue
 

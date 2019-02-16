@@ -219,7 +219,7 @@ class Result(object):
 	def get_incumbent_id(self):
 		"""
 		Find the config_id of the incumbent.
-
+	
 		The incumbent here is the configuration with the smallest loss
 		among all runs on the maximum budget! If no run finishes on the
 		maximum budget, None is returned!

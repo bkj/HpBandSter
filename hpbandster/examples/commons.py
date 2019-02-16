@@ -5,7 +5,7 @@ Worker for Examples 1-4
 This class implements a very simple worker used in the firt examples.
 """
 
-import numpy
+import numpy as np
 import time
 
 import ConfigSpace as CS
@@ -13,13 +13,14 @@ from hpbandster.core.worker import Worker
 
 
 class MyWorker(Worker):
-
+    
     def __init__(self, *args, sleep_interval=0, **kwargs):
         super().__init__(*args, **kwargs)
-
+        
         self.sleep_interval = sleep_interval
+        self.rng  = np.random.RandomState(456)
 
-    def compute(self, config, budget, **kwargs):
+    def compute(self, config_id, config, budget, **kwargs):
         """
         Simple example for a compute function
         The loss is just a the config + some noise (that decreases with the budget)
@@ -36,18 +37,28 @@ class MyWorker(Worker):
                 'loss' (scalar)
                 'info' (dict)
         """
-
-        res = numpy.clip(config['x'] + numpy.random.randn()/budget, config['x']/2, 1.5*config['x'])
+        
+        print('MyWorker.compute:')
+        print('\tconfig_id', config_id)
+        print('\tconfig   ', config)
+        print('\tbudget   ', budget)
+        
+        res = np.clip(config['x'] + self.rng.randn()/budget, config['x']/2, 1.5*config['x'])
         time.sleep(self.sleep_interval)
-
-        return({
-                    'loss': float(res),  # this is the a mandatory field to run hyperband
-                    'info': res  # can be used for any user-defined information - also mandatory
-                })
+        
+        res = {
+            'loss': float(res),  # this is the a mandatory field to run hyperband
+            'info': res  # can be used for any user-defined information - also mandatory
+        }
+        
+        print(res)
+        
+        return res
     
     @staticmethod
     def get_configspace():
         config_space = CS.ConfigurationSpace()
+        config_space.seed(123)
         config_space.add_hyperparameter(CS.UniformFloatHyperparameter('x', lower=0, upper=1))
         return(config_space)
 
