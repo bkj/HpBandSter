@@ -59,7 +59,7 @@ def make_config_generator(
     )
 
 
-class HPScheduler:
+class SHScheduler:
     def __init__(self, eta=3, min_budget=0.01, max_budget=1):
         
         # Hyperband related stuff
@@ -94,22 +94,22 @@ class HPScheduler:
             "budgets"     : list(self.budgets[(-s-1):])
         }
 
-class Job:
+class _Job:
     def __init__(self, id, kwargs, result):
-        self.id     = id
-        self.kwargs = kwargs
-        self.result = result
-        
+        self.id         = id
+        self.kwargs     = kwargs
+        self.result     = result
         self.exception  = None
         self.timestamps = -1
 
-# --
+# -
+
 
 worker = MyWorker()
 
 max_budget = 9
 
-hp_scheduler     = HPScheduler(eta=3, min_budget=1, max_budget=max_budget)
+hp_scheduler     = SHScheduler(eta=3, min_budget=1, max_budget=max_budget)
 config_generator = make_config_generator(configspace = worker.get_configspace())
 
 num_iterations = 10
@@ -167,9 +167,4 @@ for iter_num in range(num_iterations):
 
 best_run = sorted([a for a in all_history if a['budget'] == max_budget], key=lambda x: x['res']['loss'])[0]
 print(best_run['config'])
-
-
-
-
-
 
