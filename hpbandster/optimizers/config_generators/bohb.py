@@ -284,6 +284,7 @@ class BOHB(base_config_generator):
 		print('CG_BOHB.new_result')
 		
 		super().new_result(job)
+		
 
 		if job.result is None:
 			# One could skip crashed results, but we decided to
@@ -303,34 +304,35 @@ class BOHB(base_config_generator):
 		# skip model building if we already have a bigger model
 		if max(list(self.kde_models.keys()) + [-np.inf]) > budget:
 			return
-
+			
 		# We want to get a numerical representation of the configuration in the original space
-
+		
 		conf = ConfigSpace.Configuration(self.configspace, job.kwargs["config"])
 		self.configs[budget].append(conf.get_array())
 		self.losses[budget].append(loss)
-
 		
 		# skip model building:
 		#		a) if not enough points are available
-		if len(self.configs[budget]) <= self.min_points_in_model-1:
+		if len(self.configs[budget]) <= self.min_points_in_model - 1:
 			self.logger.debug("Only %i run(s) for budget %f available, need more than %s -> can't build model!"%(len(self.configs[budget]), budget, self.min_points_in_model+1))
 			return
-
+			
 		#		b) during warnm starting when we feed previous results in and only update once
 		if not update_model:
 			return
-
+			
 		train_configs = np.array(self.configs[budget])
 		train_losses =  np.array(self.losses[budget])
-
-		n_good= max(self.min_points_in_model, (self.top_n_percent * train_configs.shape[0])//100 )
+		
+		n_good = max(self.min_points_in_model, (self.top_n_percent * train_configs.shape[0])//100)
 		#n_bad = min(max(self.min_points_in_model, ((100-self.top_n_percent)*train_configs.shape[0])//100), 10)
 		n_bad = max(self.min_points_in_model, ((100-self.top_n_percent)*train_configs.shape[0])//100)
-
+		
 		# Refit KDE for the current budget
 		idx = np.argsort(train_losses)
-
+		
+		assert train_configs.shape[0] == train_losses.shape[0]
+		
 		train_data_good = self.impute_conditional_data(train_configs[idx[:n_good]])
 		train_data_bad  = self.impute_conditional_data(train_configs[idx[n_good:n_good+n_bad]])
 
